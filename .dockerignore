@@ -11,9 +11,9 @@ __pycache__/
 .gitignore
 
 # Локальные конфиги и env
-.env
-.env.local
-.env.*.local
+#.env
+#.env.local
+#.env.*.local
 
 # Docker и compose файлы
 docker-compose.yml

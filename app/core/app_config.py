@@ -43,8 +43,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Настройки базы данных
-    POSTGRES_USER: str = "app"
-    POSTGRES_PASSWORD: str = "app"
+    POSTGRES_USER: str = "app_user"
+    POSTGRES_PASSWORD: str = "app_password"
     POSTGRES_DB: str = "app_db"
     POSTGRES_HOST: str = "db"
     POSTGRES_PORT: int = 5432
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     # Настройки Grafana
     GRAFANA_USER: str = "admin"
     GRAFANA_PASSWORD: str = "admin"
+    PROMETHEUS_PORT: int = 9090
 
     class Config:
         env_file = ".env"

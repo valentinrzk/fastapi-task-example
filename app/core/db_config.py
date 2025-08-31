@@ -14,19 +14,15 @@
 
 from typing import AsyncGenerator
 
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncEngine, async_sessionmaker
-from app.core.dependencies import get_settings_dependency
-from app.core.app_config import Settings
+from app.core.app_config import get_settings
 
 # Кеш движка и фабрики сессий (один на приложение)
 _engine: AsyncEngine | None = None
 _async_session_local: async_sessionmaker[AsyncSession] | None = None
 
 
-async def get_db(
-    settings: Settings = Depends(get_settings_dependency)
-) -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency FastAPI для получения асинхронной сессии SQLAlchemy.
 
@@ -37,6 +33,8 @@ async def get_db(
         AsyncSession: Экземпляр асинхронной сессии SQLAlchemy.
     """
     global _engine, _async_session_local
+
+    settings = get_settings()
 
     # Инициализация движка и фабрики сессий при первом вызове
     if _engine is None:

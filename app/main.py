@@ -17,6 +17,7 @@ from fastapi import FastAPI
 from app.presentation_layer.routers import tasks_router
 from app.core.log_config import setup_logging
 from app.core.app_config import get_settings
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 # -----------------------
@@ -38,6 +39,11 @@ app = FastAPI()
 # -----------------------
 # Роутеры отвечают за аутентификацию и работу с пользователями
 app.include_router(tasks_router.router)
+
+# Подключаем метрики
+@app.on_event("startup")
+async def startup():
+    Instrumentator().instrument(app).expose(app)
 
 # -----------------------
 # Тестовый/корневой эндпоинт

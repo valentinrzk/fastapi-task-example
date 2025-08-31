@@ -1,0 +1,35 @@
+# Системные и временные файлы
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.DS_Store
+
+# Git и прочие VCS
+.git
+.gitignore
+
+# Локальные конфиги и env
+.env
+.env.local
+.env.*.local
+
+# Docker и compose файлы
+docker-compose.yml
+Dockerfile
+
+# Логи
+logs/
+*.log
+
+# Тесты
+tests/
+test_*.py
+
+# Сборка, кэш, виртуальные окружения
+*.egg-info
+dist/
+build/
+.venv/
+venv/

@@ -32,18 +32,17 @@ setup_logging()
 # Настройки кэшируются через lru_cache внутри get_settings()
 settings = get_settings()
 
+
+
 app = FastAPI()
+
+Instrumentator().instrument(app).expose(app)
 
 # -----------------------
 # Подключение роутеров
 # -----------------------
 # Роутеры отвечают за аутентификацию и работу с пользователями
 app.include_router(tasks_router.router)
-
-# Подключаем метрики
-@app.on_event("startup")
-async def startup():
-    Instrumentator().instrument(app).expose(app)
 
 # -----------------------
 # Тестовый/корневой эндпоинт

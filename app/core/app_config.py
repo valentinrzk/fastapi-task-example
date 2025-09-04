@@ -43,29 +43,37 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Настройки базы данных
+    """
     POSTGRES_USER: str = "app_user"
     POSTGRES_PASSWORD: str = "app_password"
     POSTGRES_DB: str = "app_db"
     POSTGRES_HOST: str = "db"
     POSTGRES_PORT: int = 5432
+    """
+    DB_HOST: str
+    DB_PORT: int
+    DB_NAME: str
+    DB_USER: str
+    DB_PASS: str
 
     # Автоматическая генерация URL для подключения к БД
     @property
     def get_database_async_url(self) -> str:
         return (
-            f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
     # Генерация URL для подключения к базе данных (синхронный)
     @property
     def get_database_sync_url(self) -> str:
         return (
-            f"postgresql+psycopg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+            f"postgresql+psycopg://{self.DB_USER}:{self.DB_PASS}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
     # Настройки Grafana
+
     GRAFANA_USER: str = "admin"
     GRAFANA_PASSWORD: str = "admin"
     PROMETHEUS_PORT: int = 9090

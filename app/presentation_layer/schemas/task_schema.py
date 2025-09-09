@@ -1,45 +1,90 @@
-from typing import Optional
+"""
+Модуль: app.presentation_layer.schemas.task_schema
+=================================================
+
+Модуль содержит Pydantic-схемы для валидации, сериализации и документации
+объектов "Task" в REST API. Поддерживается полное, частичное обновление,
+а также генерация примеров данных для Swagger.
+"""
+from typing import Optional, Annotated
 from uuid import UUID
 from pydantic import BaseModel, Field
 from app.data_access_layer.models.task_model import TaskStatus
 
 
-class TaskBase(BaseModel):
-    title: str = Field(
-        ...,
-        description="Название задачи",
-        max_length=100,
-        examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
-    )
+class BaseSchema(BaseModel):
+    """Базовая схема, включающая общие настройки для всех моделей."""
+    model_config = {"from_attributes": True}
 
-    description: Optional[str] = Field(
-        None,
-        description="Описание задачи",
-        max_length=1000
-    )
+class TaskBase(BaseSchema):
+    """Базовая модель задачи, содержит общие поля для всех операций."""
+    title: Annotated[
+        str,
+        Field(
+            description="Название задачи",
+            max_length=100,
+            examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
+        )
+    ]
+
+    description: Annotated[
+        Optional[str],
+        Field(
+            description="Описание задачи",
+            max_length=1000,
+        )
+    ]
 
 
 class TaskCreate(TaskBase):
-    pass  # Для создания достаточно title и description
+    """
+    Модель для создания новой задачи.
+
+    Наследует `title` и `description` от `TaskBase`.
+    """
 
 
 class TaskUpdate(BaseModel):
-    title: Optional[str] = Field(
-        None,
-        description="Новое название",
-        max_length=100
-    )
-    description: Optional[str] = Field(
-        None,
-        description="Новое описание",
-        max_length=1000
-    )
-    status: Optional[TaskStatus] = None
+    """
+    Модель для частичного обновления задачи (PATCH).
+
+    Все поля являются необязательными.
+    """
+    title: Annotated[
+        str,
+        Field(
+            description="Новое название задачи",
+            max_length=100,
+            examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
+            default=None
+        )
+    ]
+
+    description: Annotated[
+        Optional[str],
+        Field(
+            description="Новое описание задачи",
+            max_length=1000,
+            default=None
+        )
+    ]
+    status: Annotated[
+        Optional[TaskStatus],
+        Field(
+            description="Новый статус задачи",
+            default=None
+        )
+    ]
 
 
 class TaskRead(TaskBase):
+    """
+    Модель для возврата задачи в API-ответах.
+
+    Наследует `title` и `description` от `TaskBase`.
+    """
     id: UUID
     status: TaskStatus
 
-    class Config:
-        orm_mode = True  # Позволяет Pydantic читать данные из SQLAlchemy моделей
+class TaskDeleteResponse(BaseModel):
+    message: str = "Task deleted successfully"

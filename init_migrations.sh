@@ -2,7 +2,7 @@
 
 # Ждём 30 секунд
 echo "Waiting for 30 seconds..."
-sleep 30
+sleep 15
 
 # Создаём ревизию Alembic с автогенерацией
 echo "Creating initial Alembic revision..."

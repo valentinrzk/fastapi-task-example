@@ -21,7 +21,7 @@ from app.data_access_layer.repositories.task_repository import TaskRepository
 class TaskService:
     """Сервисный слой для работы с задачами."""
 
-    def __init__(self, repository: TaskRepository):
+    def __init__(self, repository: TaskRepository) -> None:
         """
         Args:
             repository (TaskRepository): Репозиторий для работы с БД.
@@ -39,15 +39,17 @@ class TaskService:
         Returns:
             Task: Созданная задача
         """
+        # Бизнес-правило: Название задачи не может быть пустым.
         if not title:
-            raise BusinessRuleError("Title не может быть пустым")
+            raise BusinessRuleError("Title cannot be empty")
 
-        # Проверка уникальности через репозиторий
+        # Бизнес-правило: Название задачи должно быть уникальным
         existing = await self.repo.get_by_title(title)
         if existing:
-            raise BusinessRuleError("Задача с таким названием уже существует")
+            raise BusinessRuleError("Task with this title already exists")
 
-        task = Task(title=title, description=description)
+        # Явно ставим дефолтный статус и временные метки
+        task = Task(title=title, description=description, status=TaskStatus.CREATED)
         await self.repo.create(task)
         return task
 
@@ -66,7 +68,7 @@ class TaskService:
         """
         task = await self.repo.get_by_id(task_id)
         if not task:
-            raise NotFoundError(f"Task {task_id} не найден")
+            raise NotFoundError(f"Task {task_id} not found")
         return task
 
     async def list_tasks(self, status: TaskStatus | None = None) -> list[Task]:
@@ -89,9 +91,11 @@ class TaskService:
         if description is not None:
             task.description = description
         if status is not None:
-            # пример бизнес-правила: нельзя вернуть из DONE в IN_PROGRESS
+            # Бизнес-правило: Нельзя изменить статус завершенной задачи
             if task.status == TaskStatus.DONE and status != TaskStatus.DONE:
-                raise BusinessRuleError("Нельзя изменить статус завершенной задачи")
+                raise BusinessRuleError(
+                    "The status of a completed task cannot be changed."
+                )
             task.status = status
 
         await self.repo.update(task)  # flush, commit делается выше в сессии
@@ -102,8 +106,10 @@ class TaskService:
         """Удаление задачи по id с проверкой бизнес-правил."""
         task = await self.get_task(task_id)  # бросит NotFoundException, если нет
 
-        # пример бизнес-правила: нельзя удалять задачи в процессе выполнения
-        if task.status == TaskStatus.IN_PROGRESS:
-            raise BusinessRuleError("Нельзя удалить задачу в работе")
+        # Бизнес-правило: задачу можно удалить только в статусе CREATED
+        if task.status != TaskStatus.CREATED:
+            raise BusinessRuleError(
+                "A task can only be deleted when its status is 'created'."
+            )
 
         await self.repo.delete(task)

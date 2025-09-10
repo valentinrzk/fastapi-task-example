@@ -10,12 +10,12 @@
 и управляет бизнес-правилами и проверками.
 """
 
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 
+from app.core.exceptions import BusinessRuleError, NotFoundError
 from app.data_access_layer.models.task_model import Task, TaskStatus
 from app.data_access_layer.repositories.task_repository import TaskRepository
-from app.core.exceptions import NotFoundException, BusinessRuleException
 
 
 class TaskService:
@@ -29,7 +29,7 @@ class TaskService:
         self.repo = repository
 
     # -------------------- CREATE --------------------
-    async def create_task(self, title: str, description: Optional[str] = None) -> Task:
+    async def create_task(self, title: str, description: str | None = None) -> Task:
         """Создание новой задачи.
 
         Args:
@@ -40,12 +40,12 @@ class TaskService:
             Task: Созданная задача
         """
         if not title:
-            raise BusinessRuleException("Title не может быть пустым")
+            raise BusinessRuleError("Title не может быть пустым")
 
         # Проверка уникальности через репозиторий
         existing = await self.repo.get_by_title(title)
         if existing:
-           raise BusinessRuleException("Задача с таким названием уже существует")
+            raise BusinessRuleError("Задача с таким названием уже существует")
 
         task = Task(title=title, description=description)
         await self.repo.create(task)
@@ -66,10 +66,10 @@ class TaskService:
         """
         task = await self.repo.get_by_id(task_id)
         if not task:
-            raise NotFoundException(f"Task {task_id} не найден")
+            raise NotFoundError(f"Task {task_id} не найден")
         return task
 
-    async def list_tasks(self, status: Optional[TaskStatus] = None) -> List[Task]:
+    async def list_tasks(self, status: TaskStatus | None = None) -> list[Task]:
         """Получение списка задач, с опциональной фильтрацией по статусу."""
         return await self.repo.list(status=status)
 
@@ -77,9 +77,9 @@ class TaskService:
     async def update_task(
         self,
         task_id: UUID,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        status: Optional[TaskStatus] = None,
+        title: str | None = None,
+        description: str | None = None,
+        status: TaskStatus | None = None,
     ) -> Task:
         """Обновление задачи по id с проверкой бизнес-правил."""
         task = await self.get_task(task_id)  # бросит NotFoundException, если нет
@@ -91,7 +91,7 @@ class TaskService:
         if status is not None:
             # пример бизнес-правила: нельзя вернуть из DONE в IN_PROGRESS
             if task.status == TaskStatus.DONE and status != TaskStatus.DONE:
-                raise BusinessRuleException("Нельзя изменить статус завершенной задачи")
+                raise BusinessRuleError("Нельзя изменить статус завершенной задачи")
             task.status = status
 
         await self.repo.update(task)  # flush, commit делается выше в сессии
@@ -104,6 +104,6 @@ class TaskService:
 
         # пример бизнес-правила: нельзя удалять задачи в процессе выполнения
         if task.status == TaskStatus.IN_PROGRESS:
-            raise BusinessRuleException("Нельзя удалить задачу в работе")
+            raise BusinessRuleError("Нельзя удалить задачу в работе")
 
         await self.repo.delete(task)

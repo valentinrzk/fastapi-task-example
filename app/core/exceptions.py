@@ -5,18 +5,21 @@
 Содержит кастомные исключения для бизнес-логики и HTTP слоёв.
 """
 
-class BusinessRuleException(Exception):
+
+class BusinessRuleError(Exception):
     """Ошибка нарушения бизнес-правила.
 
     Используется в сервисном слое для указания,
     что операция запрещена правилами бизнес-логики.
     """
+
     pass
 
 
-class NotFoundException(Exception):
+class NotFoundError(Exception):
     """Ошибка отсутствия сущности.
 
     Используется, когда объект не найден в репозитории или базе данных.
     """
+
     pass

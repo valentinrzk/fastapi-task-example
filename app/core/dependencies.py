@@ -14,26 +14,29 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.business_logic_layer.services.task_service import TaskService
+from app.core.app_config import Settings, get_settings
 from app.core.db_config import get_db
 from app.data_access_layer.repositories.task_repository import TaskRepository
-from app.core.app_config import get_settings, Settings
 
 
-async def get_settings_dependency(settings: Settings = Depends(get_settings)) -> Settings:
-    return settings
-
-async def get_db_session(session: AsyncSession = Depends(get_db)):
+async def get_db_session(session: AsyncSession = Depends(get_db)) -> AsyncSession:
     """
-        Получение асинхронной сессии базы данных.
-        Args:
-            session (AsyncSession): Сессия SQLAlchemy, создаётся автоматически через Depends(get_db).
-        Returns:
-            AsyncSession: Асинхронная сессия SQLAlchemy для работы с БД.
-        """
+    Получение асинхронной сессии базы данных.
+    Args:
+        session (AsyncSession): Сессия SQLAlchemy, создаётся автоматически через Depends(get_db).
+    Returns:
+        AsyncSession: Асинхронная сессия SQLAlchemy для работы с БД.
+    """
     return session
 
-async def get_task_repository(session: AsyncSession = Depends(get_db_session)) -> TaskRepository:
+
+async def get_task_repository(
+    session: AsyncSession = Depends(get_db_session),
+) -> TaskRepository:
     return TaskRepository(session=session)
 
-async def get_task_service(repository: TaskRepository = Depends(get_task_repository)) -> TaskService:
+
+async def get_task_service(
+    repository: TaskRepository = Depends(get_task_repository),
+) -> TaskService:
     return TaskService(repository=repository)

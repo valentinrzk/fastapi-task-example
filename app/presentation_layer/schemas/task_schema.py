@@ -6,33 +6,39 @@
 объектов "Task" в REST API. Поддерживается полное, частичное обновление,
 а также генерация примеров данных для Swagger.
 """
-from typing import Optional, Annotated
+
+from typing import Annotated, Optional
 from uuid import UUID
+
 from pydantic import BaseModel, Field
+
 from app.data_access_layer.models.task_model import TaskStatus
 
 
 class BaseSchema(BaseModel):
     """Базовая схема, включающая общие настройки для всех моделей."""
+
     model_config = {"from_attributes": True}
+
 
 class TaskBase(BaseSchema):
     """Базовая модель задачи, содержит общие поля для всех операций."""
+
     title: Annotated[
         str,
         Field(
             description="Название задачи",
             max_length=100,
             examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
-        )
+        ),
     ]
 
     description: Annotated[
-        Optional[str],
+        str | None,
         Field(
             description="Описание задачи",
             max_length=1000,
-        )
+        ),
     ]
 
 
@@ -50,30 +56,23 @@ class TaskUpdate(BaseModel):
 
     Все поля являются необязательными.
     """
+
     title: Annotated[
         str,
         Field(
             description="Новое название задачи",
             max_length=100,
             examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
-            default=None
-        )
+            default=None,
+        ),
     ]
 
     description: Annotated[
-        Optional[str],
-        Field(
-            description="Новое описание задачи",
-            max_length=1000,
-            default=None
-        )
+        str | None,
+        Field(description="Новое описание задачи", max_length=1000, default=None),
     ]
     status: Annotated[
-        Optional[TaskStatus],
-        Field(
-            description="Новый статус задачи",
-            default=None
-        )
+        TaskStatus | None, Field(description="Новый статус задачи", default=None)
     ]
 
 
@@ -83,8 +82,10 @@ class TaskRead(TaskBase):
 
     Наследует `title` и `description` от `TaskBase`.
     """
+
     id: UUID
     status: TaskStatus
+
 
 class TaskDeleteResponse(BaseModel):
     message: str = "Task deleted successfully"

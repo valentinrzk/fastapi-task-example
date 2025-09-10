@@ -23,30 +23,27 @@
 import logging
 from logging.config import dictConfig
 
-
 LOGGING_CONFIG = {
-    "version": 1,   # Версия схемы конфигурации логгера (1 — актуальная)
+    "version": 1,  # Версия схемы конфигурации логгера (1 — актуальная)
     "disable_existing_loggers": False,  # Не отключаем уже существующие логгеры
-
     "formatters": {  # Форматирование сообщений логов
         "default": {"format": "%(asctime)s %(levelname)s %(name)s - %(message)s"},
         "uvicorn": {"format": "%(asctime)s %(levelname)s %(name)s - %(message)s"},
     },
-
     "handlers": {  # "Обработчики" логов — куда отправлять сообщение
         "console": {  # Здесь логи выводятся в stdout (терминал, docker logs)
             "class": "logging.StreamHandler",  # Потоковый обработчик (stdout)
             "formatter": "default",  # Используем формат default
         },
     },
-
     "root": {  # Настройки корневого логгера
         "level": "INFO",  # Минимальный уровень логов (DEBUG < INFO < WARNING < ERROR)
         "handlers": ["console"],  # Отправляем логи в консоль
     },
 }
 
-def setup_logging():
+
+def setup_logging() -> None:
     """
     Подключает созданную конфигурацию логгирования.
     Принудительно повышает уровень логов SQLAlchemy до WARNING

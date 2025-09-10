@@ -16,11 +16,14 @@
 Он инкапсулирует SQL-запросы и обеспечивает единый интерфейс для
 создания, чтения, обновления и удаления задач.
 """
-from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from app.data_access_layer.models.task_model import Task, TaskStatus
+
+from typing import Any, Optional
 from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.data_access_layer.models.task_model import Task, TaskStatus
 
 
 class TaskRepository:
@@ -32,7 +35,7 @@ class TaskRepository:
     Коммит осуществляется в BLL
     """
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         """
         Инициализация репозитория.
 
@@ -56,7 +59,7 @@ class TaskRepository:
         return task
 
     # -------------------- READ --------------------
-    async def get_by_id(self, task_id: UUID) -> Optional[Task]:
+    async def get_by_id(self, task_id: UUID) -> Task | None:
         """Получение задачи по UUID.
 
         Args:
@@ -68,7 +71,7 @@ class TaskRepository:
         result = await self.session.get(Task, task_id)
         return result
 
-    async def get_by_title(self, title: str) -> Optional[Task]:
+    async def get_by_title(self, title: str) -> Task | None:
         """Получение задачи по названию.
 
         Args:
@@ -81,7 +84,7 @@ class TaskRepository:
         result = await self.session.execute(stmt)
         return result.scalars().first()
 
-    async def list(self, status: Optional[TaskStatus] = None) -> List[Task]:
+    async def list(self, status: TaskStatus | None = None) -> list[Task]:
         """Получение списка задач. Можно фильтровать по статусу.
 
         Args:
@@ -97,7 +100,7 @@ class TaskRepository:
         return list(result.scalars().all())
 
     # -------------------- UPDATE --------------------
-    async def update(self, task: Task, **kwargs) -> Task:
+    async def update(self, task: Task, **kwargs: Any) -> Task:
         """Обновление полей задачи.
 
         Args:

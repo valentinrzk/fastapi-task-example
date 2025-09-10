@@ -9,46 +9,37 @@
 - Инициализация логирования.
 - Загрузка настроек приложения.
 - Создание экземпляра FastAPI.
-- Подключение роутеров (эндпоинтов).
+- Подключение метрик.
+- Подключение роутеров.
 - Определение корневого эндпоинта проверки работы сервиса.
 """
 
 from fastapi import FastAPI
-from app.presentation_layer.routers import tasks_router
-from app.core.log_config import setup_logging
-from app.core.app_config import get_settings
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from app.core.app_config import get_settings
+from app.core.log_config import setup_logging
+from app.presentation_layer.routers import tasks_router
 
-# -----------------------
-# Настройка логирования
-# -----------------------
-# Вызывается перед созданием экземпляра FastAPI, чтобы все логи приложения корректно обрабатывались.
+# Настраиваем конфигурацию логгирования
 setup_logging()
 
-# -----------------------
-# Загрузка настроек
-# -----------------------
-# Настройки кэшируются через lru_cache внутри get_settings()
+# Загружаем настрйоки и кешируем их
 settings = get_settings()
 
-
-
+# Создаем экземпляр приложения FastAPI
 app = FastAPI()
 
+# Подключаем Prometheus для сбора метрик
 Instrumentator().instrument(app).expose(app)
 
-# -----------------------
-# Подключение роутеров
-# -----------------------
-# Роутеры отвечают за аутентификацию и работу с пользователями
+# Подключаем роутеры
 app.include_router(tasks_router.router)
 
-# -----------------------
+
 # Тестовый/корневой эндпоинт
-# -----------------------
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     """
     Корневой эндпоинт для проверки доступности сервиса.
 

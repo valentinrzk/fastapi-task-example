@@ -12,9 +12,15 @@
 3. Предоставляет зависимость `get_db()` для корректной работы сессий в эндпоинтах.
 """
 
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncEngine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+
 from app.core.app_config import get_settings
 
 # Кеш движка и фабрики сессий (один на приложение)
@@ -39,14 +45,11 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     # Инициализация движка и фабрики сессий при первом вызове
     if _engine is None:
         _engine = create_async_engine(
-            settings.get_database_async_url,
-            echo=settings.DEBUG
+            settings.get_database_async_url, echo=settings.DEBUG
         )
     if _async_session_local is None:
         _async_session_local = async_sessionmaker(
-            bind=_engine,
-            class_=AsyncSession,
-            expire_on_commit=False
+            bind=_engine, class_=AsyncSession, expire_on_commit=False
         )
 
     async with _async_session_local() as session:

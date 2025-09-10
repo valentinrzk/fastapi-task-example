@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ждём 30 секунд
-echo "Waiting for 30 seconds..."
+echo "Waiting for 15 seconds..."
 sleep 15
 
 # Создаём ревизию Alembic с автогенерацией

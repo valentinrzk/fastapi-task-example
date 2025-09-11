@@ -40,16 +40,14 @@ class TaskService:
             Task: Созданная задача
         """
         # Бизнес-правило: Название задачи не может быть пустым.
-        if not title:
-            raise BusinessRuleError("Title cannot be empty")
+        await self.ensure_title_is_not_empty(title)
 
         # Бизнес-правило: Название задачи должно быть уникальным
-        existing = await self.repo.get_by_title(title)
-        if existing:
-            raise BusinessRuleError("Task with this title already exists")
+        await self.ensure_unique_title(title)
 
-        # Явно ставим дефолтный статус и временные метки
+        # Явно ставим дефолтный статус
         task = Task(title=title, description=description, status=TaskStatus.CREATED)
+
         await self.repo.create(task)
         return task
 
@@ -86,10 +84,13 @@ class TaskService:
         """Обновление задачи по id с проверкой бизнес-правил."""
         task = await self.get_task(task_id)  # бросит NotFoundException, если нет
 
-        if title is not None:
-            task.title = title
-        if description is not None:
-            task.description = description
+        await self.ensure_title_is_not_empty(title)
+        await self.ensure_unique_title(title)
+
+        task.title = title
+
+        task.description = description
+
         if status is not None:
             # Бизнес-правило: Нельзя изменить статус завершенной задачи
             if task.status == TaskStatus.DONE and status != TaskStatus.DONE:
@@ -113,3 +114,29 @@ class TaskService:
             )
 
         await self.repo.delete(task)
+
+    # -------------------- COMMON --------------------
+    async def ensure_unique_title(self, title: str) -> None:
+        """Проверяет, что название задачи является уникальным.
+
+        Args:
+            title (str): Название задачи
+
+        Raises:
+            BusinessRuleError: Если название уже существует.
+        """
+        existing = await self.repo.get_by_title(title)
+        if existing:
+            raise BusinessRuleError("Task with this title already exists")
+
+    async def ensure_title_is_not_empty(self, title: str) -> None:
+        """Проверяет, что название задачи не пустое.
+
+        Args:
+            title (str): Название задачи
+
+        Raises:
+            BusinessRuleError: Если название пустое или состоит только из пробелов.
+        """
+        if not title or not title.strip():
+            raise BusinessRuleError("Title cannot be empty")

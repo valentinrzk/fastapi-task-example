@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, Field, constr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, constr, field_validator
 
 from app.data_access_layer.models.task_model import TaskStatus
 
@@ -9,7 +9,7 @@ from app.data_access_layer.models.task_model import TaskStatus
 class BaseSchema(BaseModel):
     """Базовая схема с настройкой from_attributes."""
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TaskBase(BaseSchema):

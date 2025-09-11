@@ -84,22 +84,21 @@ class TaskService:
         """Обновление задачи по id с проверкой бизнес-правил."""
         task = await self.get_task(task_id)  # бросит NotFoundException, если нет
 
-        await self.ensure_title_is_not_empty(title)
-        await self.ensure_unique_title(title)
-
-        task.title = title
+        if title is not None:
+            await self.ensure_title_is_not_empty(title)
+            await self.ensure_unique_title(title)
+            task.title = title
 
         task.description = description
 
         if status is not None:
-            # Бизнес-правило: Нельзя изменить статус завершенной задачи
             if task.status == TaskStatus.DONE and status != TaskStatus.DONE:
                 raise BusinessRuleError(
                     "The status of a completed task cannot be changed."
                 )
             task.status = status
 
-        await self.repo.update(task)  # flush, commit делается выше в сессии
+        await self.repo.update(task)
         return task
 
     # -------------------- DELETE --------------------

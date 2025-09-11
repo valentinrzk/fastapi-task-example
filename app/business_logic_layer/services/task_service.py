@@ -86,7 +86,11 @@ class TaskService:
 
         if title is not None:
             await self.ensure_title_is_not_empty(title)
-            await self.ensure_unique_title(title)
+
+            existing = await self.repo.get_by_title(title)
+            if existing and existing.id != task.id:
+                raise BusinessRuleError("Task with this title already exists")
+
             task.title = title
 
         task.description = description

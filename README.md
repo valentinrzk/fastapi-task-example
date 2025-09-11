@@ -17,7 +17,7 @@
 * **Repository layer** — доступ к данным
 * **Data models (SQLAlchemy)** — модели таблиц базы данных
 
-## 🏗️ Структура проекта
+## Структура проекта
 
 ```
 root/                               # Корень проекта
@@ -26,6 +26,7 @@ root/                               # Корень проекта
         ├── app_config.py           # Подгрузка переменных из env
         ├── db_config.py            # Настройка бд
         ├── dependencies.py         # Настройка зависимостей для внедрения
+        ├── exception_handlers      # Глобальная обработка исключений
         ├── exceptions.py           # Кастомные исключения
         ├── log_config.py           # Настройка логгера под промтейл
     ├── data_access_layer/          # Слой доступа к данным
@@ -43,17 +44,39 @@ root/                               # Корень проекта
         ├── routes/                 # Ручки
             ├── task_router         # Роутер для задач, содержит круд ручек
     ├── main.py                     # Точка входа
-├── tests                           # Тесты
-├── migration                       # Мигарции alembic
-├── grafana                         # конфиг графаны
-├── loki                            # конфиг локи
-├── promtail                        # конфиг промтейла
-├── prometheus                      # конфиг прометеуса
+├── tests/                          # Тесты
+    ├── units/
+        ├── repositories/
+            ├── test_task_repository# Юнит тесты репозитория
+        ├── services/
+            ├── test_task_service   # Юнит тесты сервиса
+        ├── shemas/
+            ├── test_task_shema     # Юнит тесты Pydantic схем
+        ├── routers/
+            ├── test_task_router    # Юнит тесты ручек
+├── migration/                      # Мигарции alembic
+├── grafana/                        # конфиг графаны
+├── loki/                           # конфиг локи
+├── promtail/                       # конфиг промтейла
+├── prometheus/                     # конфиг прометеуса
 
 ... и многое другое типа пре коммитов, скриптов, конфигов
 ```
+## Чистый код
 
-## 📊 Наблюдаемость
+В проект встроены pre-commit hooks для гарантии чистого кода:
+
+- ruff
+- black
+- detect-secrets
+- trailing-whitespace
+- end-of-file-fixer
+- check-yaml
+- check-added-large-files
+- check-merge-conflict
+- check-ast
+
+## Наблюдаемость
 
 В проект встроены инструменты мониторинга и логирования:
 
@@ -62,9 +85,10 @@ root/                               # Корень проекта
 * **Loki** — централизованное хранение логов
 * **Promtail** — агент для сбора логов и отправки в Loki
 
-## 🗄️ Миграции
+## Миграции
 
 Миграции базы данных управляются через **Alembic**.
+
 Примеры:
 
 ```bash
@@ -72,7 +96,9 @@ alembic revision --autogenerate -m "init"
 alembic upgrade head
 ```
 
-## ▶️ Запуск через Docker Compose
+Миграции применяются автоматически при запуске Docker-compose
+
+## Запуск через Docker Compose
 
 Убедитесь, что у вас установлен Docker и Docker Compose.
 
@@ -108,8 +134,22 @@ alembic upgrade head
 
 ## 🧪 Тестирование
 
+В проекте реализовано покрытие из 69 unit-тестов:
+
+- Репозиторий
+- Бизнес-логика
+- Endpoints
+- Pydantic схемы
+
 Для запуска тестов (с pytest):
+```
+- python -m venv .venv          # В корне проекта ставим venv
+- source .venv/bin/activate     # Linux/macOS
+- .venv\Scripts\activate        # Windows
+- pip install -r requirements-dev.txt     # Устанавливаем дев зависимости
+- pytest -v                       # Запускаем тесты
+```
 
 ```bash
-pytest
+pytest -v
 ```

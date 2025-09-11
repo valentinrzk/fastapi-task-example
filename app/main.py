@@ -18,8 +18,14 @@ from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.core.app_config import get_settings
+from app.core.exception_handlers import (
+    business_rule_exception_handler,
+    generic_exception_handler,
+    not_found_exception_handler,
+)
+from app.core.exceptions import BusinessRuleError, NotFoundError
 from app.core.log_config import setup_logging
-from app.presentation_layer.routers import tasks_router
+from app.presentation_layer.routers import task_router
 
 # Настраиваем конфигурацию логгирования
 setup_logging()
@@ -33,8 +39,13 @@ app = FastAPI()
 # Подключаем Prometheus для сбора метрик
 Instrumentator().instrument(app).expose(app)
 
+# Регистрируем обработчики
+app.add_exception_handler(NotFoundError, not_found_exception_handler)
+app.add_exception_handler(BusinessRuleError, business_rule_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
+
 # Подключаем роутеры
-app.include_router(tasks_router.router)
+app.include_router(task_router.router)
 
 
 # Тестовый/корневой эндпоинт

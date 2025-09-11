@@ -213,11 +213,18 @@ class TestUpdateTask:
     async def test_update_task_duplicate_title(
         self, service: TaskService, repo_mock: AsyncMock, sample_task: Task
     ):
-        """Попытка обновить название на уже существующее вызывает BusinessRuleError."""
+        """Попытка обновить название на уже существующее у другой задачи вызывает BusinessRuleError."""
+        # Исходная задача, которую обновляем
         repo_mock.get_by_id.return_value = sample_task
-        repo_mock.get_by_title.return_value = (
-            sample_task  # имитация существующего названия
+
+        # Возвращаем другую задачу с тем же title
+        another_task = Task(
+            id=uuid.uuid4(),  # другой UUID
+            title=sample_task.title,
+            description="Other",
+            status=TaskStatus.CREATED,
         )
+        repo_mock.get_by_title.return_value = another_task
 
         with pytest.raises(BusinessRuleError):
             await service.update_task(sample_task.id, title=sample_task.title)

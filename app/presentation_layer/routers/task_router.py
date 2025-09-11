@@ -16,6 +16,7 @@ from fastapi.responses import Response
 
 from app.business_logic_layer.services.task_service import TaskService
 from app.core.dependencies import get_task_service
+from app.data_access_layer.models.task_model import TaskStatus
 from app.presentation_layer.schemas.task_schema import TaskCreate, TaskRead, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -64,7 +65,7 @@ async def get_task(
 
 @router.get("/", response_model=list[TaskRead])
 async def list_tasks(
-    task_status: str | None = None,
+    task_status: TaskStatus | None = None,
     service: TaskService = Depends(get_task_service),  # type: ignore
 ) -> list[TaskRead]:
     """

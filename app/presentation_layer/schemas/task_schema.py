@@ -1,91 +1,88 @@
-"""
-Модуль: app.presentation_layer.schemas.task_schema
-=================================================
-
-Модуль содержит Pydantic-схемы для валидации, сериализации и документации
-объектов "Task" в REST API. Поддерживается полное, частичное обновление,
-а также генерация примеров данных для Swagger.
-"""
-
-from typing import Annotated, Optional
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, constr, field_validator
 
 from app.data_access_layer.models.task_model import TaskStatus
 
 
 class BaseSchema(BaseModel):
-    """Базовая схема, включающая общие настройки для всех моделей."""
+    """Базовая схема с настройкой from_attributes."""
 
     model_config = {"from_attributes": True}
 
 
 class TaskBase(BaseSchema):
-    """Базовая модель задачи, содержит общие поля для всех операций."""
+    """Базовая схема задачи."""
 
     title: Annotated[
-        str,
+        constr(min_length=1, max_length=150),
         Field(
             description="Название задачи",
-            max_length=100,
             examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
         ),
     ]
-
     description: Annotated[
         str | None,
         Field(
             description="Описание задачи",
-            max_length=1000,
+            max_length=5000,
         ),
     ]
 
+    @field_validator("title")
+    @classmethod
+    def title_must_not_be_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("title не может быть пустым или содержать только пробелы")
+        return v
+
 
 class TaskCreate(TaskBase):
-    """
-    Модель для создания новой задачи.
-
-    Наследует `title` и `description` от `TaskBase`.
-    """
+    """Схема для создания задачи. title обязателен, description опционален."""
 
 
-class TaskUpdate(BaseModel):
-    """
-    Модель для частичного обновления задачи (PATCH).
-
-    Все поля являются необязательными.
-    """
+class TaskUpdate(BaseSchema):
+    """Схема для частичного обновления задачи (PATCH)."""
 
     title: Annotated[
-        str,
+        constr(min_length=1, max_length=150) | None,
         Field(
             description="Новое название задачи",
-            max_length=100,
             examples=["Сходить за продуктами", "Погулять с дочкой", "Выбросить мусор"],
             default=None,
         ),
     ]
-
     description: Annotated[
         str | None,
-        Field(description="Новое описание задачи", max_length=1000, default=None),
+        Field(description="Новое описание задачи", max_length=5000, default=None),
     ]
     status: Annotated[
         TaskStatus | None, Field(description="Новый статус задачи", default=None)
     ]
 
+    @field_validator("title")
+    @classmethod
+    def title_must_not_be_blank(cls, v: str | None) -> str | None:
+        if v is not None and not v.strip():
+            raise ValueError("title не может быть пустым или содержать только пробелы")
+        return v
+
 
 class TaskRead(TaskBase):
-    """
-    Модель для возврата задачи в API-ответах.
-
-    Наследует `title` и `description` от `TaskBase`.
-    """
+    """Схема для возврата задачи через API."""
 
     id: UUID
     status: TaskStatus
 
 
+class TaskListResponse(BaseSchema):
+    """Модель для возврата списка задач."""
+
+    tasks: list[TaskRead]
+
+
 class TaskDeleteResponse(BaseModel):
+    """Модель ответа при успешном удалении задачи."""
+
     message: str = "Task deleted successfully"

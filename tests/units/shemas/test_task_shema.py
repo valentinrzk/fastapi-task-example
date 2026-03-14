@@ -20,8 +20,8 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from app.data_access_layer.models.task_model import TaskStatus
-from app.presentation_layer.schemas.task_schema import (
+from src.data_access_layer.models.task_model import TaskStatus
+from src.presentation_layer.schemas.task_schema import (
     TaskCreate,
     TaskDeleteResponse,
     TaskListResponse,

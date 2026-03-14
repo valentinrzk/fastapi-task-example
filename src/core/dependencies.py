@@ -1,5 +1,5 @@
 """
-Модуль: app.core.dependencies.py
+Модуль: src.core.dependencies.py
 =====================
 
 Этот модуль содержит функции и объекты, которые используются в качестве зависимостей
@@ -13,10 +13,10 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.business_logic_layer.services.task_service import TaskService
-from app.core.app_config import Settings, get_settings
-from app.core.db_config import get_db
-from app.data_access_layer.repositories.task_repository import TaskRepository
+from src.business_logic_layer.services.task_service import TaskService
+from src.core.app_config import Settings, get_settings
+from src.core.db_config import get_db
+from src.data_access_layer.repositories.task_repository import TaskRepository
 
 
 async def get_db_session(session: AsyncSession = Depends(get_db)) -> AsyncSession:

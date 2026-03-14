@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.business_logic_layer.services.task_service import TaskService
-from app.data_access_layer.models.task_model import Task, TaskStatus
-from app.data_access_layer.repositories.task_repository import TaskRepository
+from src.business_logic_layer.services.task_service import TaskService
+from src.data_access_layer.models.task_model import Task, TaskStatus
+from src.data_access_layer.repositories.task_repository import TaskRepository
 
 
 @pytest.fixture

@@ -5,10 +5,10 @@ import pytest
 from fastapi import status
 from fastapi.responses import Response
 
-from app.core.exceptions import BusinessRuleError, NotFoundError
-from app.data_access_layer.models.task_model import TaskStatus
-from app.presentation_layer.routers import task_router as tasks_router
-from app.presentation_layer.schemas.task_schema import TaskCreate, TaskRead, TaskUpdate
+from src.core.exceptions import BusinessRuleError, NotFoundError
+from src.data_access_layer.models.task_model import TaskStatus
+from src.presentation_layer.routers import task_router as tasks_router
+from src.presentation_layer.schemas.task_schema import TaskCreate, TaskRead, TaskUpdate
 
 
 @pytest.fixture

@@ -10,12 +10,12 @@
 и управляет бизнес-правилами и проверками.
 """
 
-from typing import Optional
+# from typing import Optional
 from uuid import UUID
 
-from app.core.exceptions import BusinessRuleError, NotFoundError
-from app.data_access_layer.models.task_model import Task, TaskStatus
-from app.data_access_layer.repositories.task_repository import TaskRepository
+from src.core.exceptions import BusinessRuleError, NotFoundError
+from src.data_access_layer.models.task_model import Task, TaskStatus
+from src.data_access_layer.repositories.task_repository import TaskRepository
 
 
 class TaskService:

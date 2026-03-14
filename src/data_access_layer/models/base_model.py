@@ -1,5 +1,5 @@
 """
-Модуль: app.data_access_layer.models.base
+Модуль: src.data_access_layer.models.base
 ====================
 
 Этот модуль содержит базовый класс `Base`, который используется для всех моделей SQLAlchemy.

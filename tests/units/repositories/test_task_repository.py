@@ -3,8 +3,8 @@ from uuid import uuid4
 
 import pytest
 
-from app.data_access_layer.models.task_model import Task, TaskStatus
-from app.data_access_layer.repositories.task_repository import TaskRepository
+from src.data_access_layer.models.task_model import Task, TaskStatus
+from src.data_access_layer.repositories.task_repository import TaskRepository
 
 
 @pytest.mark.asyncio

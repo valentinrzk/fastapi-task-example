@@ -1,5 +1,5 @@
 """
-Модуль: app.data_access_layer.models.base
+Модуль: src.data_access_layer.models.base
 ====================
 
 Модуль содержит SQLAlchemy-модель `Task` и перечисление `TaskStatus`,
@@ -26,7 +26,7 @@ from sqlalchemy import DateTime, String, Text
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.data_access_layer.models.base_model import Base
+from src.data_access_layer.models.base_model import Base
 
 
 class TaskStatus(str, enum.Enum):

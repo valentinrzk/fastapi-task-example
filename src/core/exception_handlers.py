@@ -1,5 +1,5 @@
 """
-Модуль: app.presentation_layer.exception_handlers
+Модуль: src.presentation_layer.exception_handlers
 
 Модуль содержит кастомные обработчики исключений для FastAPI-приложения.
 

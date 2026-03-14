@@ -31,8 +31,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
-    command: bash -c "bash init_migrations.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      - .:/src
+    command: bash -c "bash init_migrations.sh && uvicorn src.main:src --host 0.0.0.0 --port 8000 --reload"
 
   loki:
     image: grafana/loki:2.9.8

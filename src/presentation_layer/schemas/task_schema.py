@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, constr, field_validator
 
-from app.data_access_layer.models.task_model import TaskStatus
+from src.data_access_layer.models.task_model import TaskStatus
 
 
 class BaseSchema(BaseModel):

@@ -1,5 +1,5 @@
 """
-Модуль: app.presentation_layer.routers.tasks
+Модуль: src.presentation_layer.routers.tasks
 ===========================================
 
 Реализация маршрутов (эндпоинтов) для работы с задачами.
@@ -14,15 +14,15 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import Response
 
-from app.business_logic_layer.services.task_service import TaskService
-from app.core.dependencies import get_task_service
-from app.data_access_layer.models.task_model import TaskStatus
-from app.presentation_layer.schemas.task_schema import TaskCreate, TaskRead, TaskUpdate
+from src.business_logic_layer.services.task_service import TaskService
+from src.core.dependencies import get_task_service
+from src.data_access_layer.models.task_model import TaskStatus
+from src.presentation_layer.schemas.task_schema import TaskCreate, TaskRead, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
-@router.post("/", response_model=TaskRead)
+@router.post("/", response_model=TaskRead, status_code=status.HTTP_201_CREATED)
 async def create_task(
     task_in: TaskCreate,
     service: TaskService = Depends(get_task_service),  # type: ignore

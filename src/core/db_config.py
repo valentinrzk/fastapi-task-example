@@ -1,5 +1,5 @@
 """
-Модуль: app.core.db_config
+Модуль: src.core.db_config
 ====================
 
 Этот модуль отвечает за настройку подключения к базе данных для FastAPI-приложения,
@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core.app_config import get_settings
+from src.core.app_config import get_settings
 
 # Кеш движка и фабрики сессий (один на приложение)
 _engine: AsyncEngine | None = None

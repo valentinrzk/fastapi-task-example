@@ -1,5 +1,5 @@
 """
-Модуль: app.core.log_config
+Модуль: src.core.log_config
 ====================
 
 Этот модуль содержит конфигурацию логирования для приложения FastAPI.
@@ -15,7 +15,7 @@
         Включает консольный вывод логов и снижает уровень подробности логов SQLAlchemy.
 
 Использование:
-    from app.core.log_config import setup_logging
+    from src.core.log_config import setup_logging
 
     setup_logging()
 """

@@ -1,5 +1,5 @@
 """
-Модуль: app.main
+Модуль: src.main
 ================
 
 Главный модуль приложения FastAPI.
@@ -17,15 +17,15 @@
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from app.core.app_config import get_settings
-from app.core.exception_handlers import (
+from src.core.app_config import get_settings
+from src.core.exception_handlers import (
     business_rule_exception_handler,
     generic_exception_handler,
     not_found_exception_handler,
 )
-from app.core.exceptions import BusinessRuleError, NotFoundError
-from app.core.log_config import setup_logging
-from app.presentation_layer.routers import task_router
+from src.core.exceptions import BusinessRuleError, NotFoundError
+from src.core.log_config import setup_logging
+from src.presentation_layer.routers import task_router
 
 # Настраиваем конфигурацию логгирования
 setup_logging()

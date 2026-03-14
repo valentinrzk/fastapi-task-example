@@ -29,9 +29,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.business_logic_layer.services.task_service import TaskService
-from app.core.exceptions import BusinessRuleError, NotFoundError
-from app.data_access_layer.models.task_model import Task, TaskStatus
+from src.business_logic_layer.services.task_service import TaskService
+from src.core.exceptions import BusinessRuleError, NotFoundError
+from src.data_access_layer.models.task_model import Task, TaskStatus
 
 
 @pytest.mark.asyncio
